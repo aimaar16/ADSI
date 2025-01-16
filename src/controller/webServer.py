@@ -55,9 +55,7 @@ def catalogue():
 def profile():
     if 'user' in dir(request) and request.user and request.user.token:
         user = request.user
-        # Obtener amigos recomendados
-        recommended_friends = library.recomendar_amigos(user)
-        return render_template('profile.html', recommended_friends=recommended_friends)
+        return render_template('profile.html')
     else:
         return redirect('/login')
 
@@ -115,6 +113,40 @@ def crearUsuario():
 		return redirect('/msg?mensaje=' + mensaje) 
 	else:
 		return render_template('crearUsuario.html')
+		
+@app.route('/revisarUsuario', methods=['GET', 'POST'])
+def revisarUsuario():
+		
+@app.route('/register', methods=['GET', 'POST'])
+def regUsuario():
+	if request.method == 'POST':
+		nombre = request.values.get("nombre")
+		apellidos = request.values.get("apellidos")
+		fecha_nac= request.values.get("fecha_nac")
+		email = request.values.get("email")
+		password = request.values.get("password")
+		#mensaje = library.add_user(nombre, apellidos, fecha_nac, email, password)
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template('register.html')
+
+@app.route('/editarPerfil', methods=['GET', 'POST'])
+def editarUsuario():
+	if request.method == 'POST':
+		if 'user' in dir(request) and request.user and request.user.token:
+			user = request.user
+		nombre = request.values.get("nombre")
+		apellidos = request.values.get("apellidos")
+		fecha_nac= request.values.get("fecha_nac")
+		email = request.values.get("email")
+		password = request.values.get("password")
+		print(request.user.email)
+		userID = library.get_user2(request.user.email)
+		print(userID.id)
+		mensaje = library.edit_user(userID.id, nombre, apellidos, fecha_nac, email, password)
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template('editarPerfil.html')
 	
 @app.route('/borrarUsuario', methods=['GET', 'POST'])
 def borrarUsuario():
@@ -124,7 +156,24 @@ def borrarUsuario():
 		return redirect('/msg?mensaje=' + mensaje)
 	else:
 		return render_template('borrarUsuario.html')
-	
+		
+@app.route('/modificarUsuario', methods=['GET', 'POST'])
+def editarADMINusuario():
+	if request.method == 'POST':
+		emailTarget = request.values.get("emailTarget")
+		nombre = request.values.get("nombre")
+		apellidos = request.values.get("apellidos")
+		fecha_nac= request.values.get("fecha_nac")
+		email = request.values.get("email")
+		password = request.values.get("password")
+		userID = library.get_user2(emailTarget)
+		print(userID.id)
+		mensaje = library.edit_user(userID.id, nombre, apellidos, fecha_nac, email, password)
+		#mensaje = library.add_user(nombre, apellidos, fecha_nac, email, password)
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template('modificarUsuario.html')
+
 @app.route('/gestorLibros')
 def gestorLibros():
 	return render_template('gestorLibros.html')

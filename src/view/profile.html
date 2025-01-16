@@ -9,31 +9,14 @@
         <div class="card-body">
             <h5 class="card-title">Información del Usuario</h5>
             <p class="card-text">Nombre: <strong>{{ request.user.username }}</strong></p>
+            <p class="card-text">Apellido: <strong>{{ request.user.last_name }}</strong></p>
+            <p class="card-text">Fecha de Nacimiento: <strong>{{ request.user.birth_date }}</strong></p>
             <p class="card-text">Email: <strong>{{ request.user.email }}</strong></p>
+            <p class="card-text">Contraseña: <strong>***********</strong></p>
+            <a href="/editarPerfil" class="btn btn-primary float-right">Modificar Datos</a>
         </div>
     </div>
 
-    <!-- Mensajes de depuración -->
-    {% if recommended_friends %}
-        <div class="mt-4">
-            <h5 class="display-4"> Amigos Recomendados:</h5>
-            <div class="row">
-                {% for friend in recommended_friends %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ friend }}</h5>
-                                <!-- Agrega tu lógica y contenido específico para cada amigo recomendado -->
-                                <button class="btn btn-primary">Agregar Amigo</button>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    {% else %}
-        <p class="mt-4">No se encontraron amigos recomendados.</p>
-    {% endif %}
 
 </div>
 {% endblock %}

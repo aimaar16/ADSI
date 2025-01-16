@@ -88,6 +88,18 @@ cur.execute("""
 """)
 
 cur.execute("""
+   CREATE TABLE UserPendientes(
+		id integer primary key AUTOINCREMENT,
+		name varchar(20),
+       		last_name varchar(50),
+        	birth_date DATE,
+        	email varchar(30) UNIQUE,
+		password varchar(32),
+		admin integer
+	)
+""")
+
+cur.execute("""
    CREATE TABLE Friend(
 		user_id integer,
 		friend_id integer,
@@ -95,6 +107,8 @@ cur.execute("""
 		FOREIGN KEY(friend_id) REFERENCES User(id)
 	)
 """)
+
+
 
 ### Insert users
 with open('usuarios.json', 'r') as f:

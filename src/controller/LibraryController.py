@@ -3,6 +3,7 @@ import hashlib
 from model import Connection, Book, User
 from model.tools import hash_password
 
+
 db = Connection()
 salt = "library"
 
@@ -44,6 +45,13 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
+			
+	def get_user2(self, email):
+		user = db.select("SELECT * from User WHERE email = ?", (email,))
+		if len(user) > 0:
+			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
+		else:
+			return None
 
 	def get_user_cookies(self, token, time):
 		user = db.select("SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?", (time, token))
@@ -62,6 +70,20 @@ class LibraryController:
 			return("Usuario creado correctamente")
 		except:
 			return("Usuario ya existe")
+			
+	def edit_user(self, userID, name, last_name, birth_date, email, password):
+		try:
+			dataBase_password = str(password) + salt
+			hashed = hashlib.md5(dataBase_password.encode())
+			dataBase_password = hashed.hexdigest()
+			
+			db.update("""
+		        UPDATE User 
+		        SET name = ?, last_name = ?, birth_date = ?, email = ?, password = ?
+		        WHERE id = ?""", (name, last_name, birth_date, email, dataBase_password, userID))
+			return "Usuario actualizado correctamente"
+		except Exception as e:
+        		return f"Error al actualizar el usuario: {str(e)}"
 
 	def delete_user(self, email):
 		id_user = db.select("SELECT id FROM User WHERE email = ?", (email,))
