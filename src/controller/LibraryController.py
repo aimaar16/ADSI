@@ -248,9 +248,55 @@ class LibraryController:
 		]
 		return rental_history
 
+	def añadir_reseña(self, movie_id, user_id, comentario, puntuacion):
+    		"""Agregar una reseña con comentario y puntuación para una película."""
+    		try:
+        	# Insertar la reseña en la tabla Reviews
+        		db.insert("""
+            		INSERT INTO Reviews (movie_id, user_id, comentario, puntuacion, fecha)
+            		VALUES (?, ?, ?, ?, ?)
+        		""", (movie_id, user_id, comentario, puntuacion, datetime.now()))
+        		return "Reseña añadida correctamente."
+    		except Exception as e:
+        		return f"Error al añadir la reseña: {str(e)}"
 
-    
+	def obtener_puntuaciones(self, movie_id, ordenar_por="puntuacion", orden="DESC"):
+    		"""Obtener las reseñas de una película, ordenadas por puntuación o fecha."""
+    		if ordenar_por not in ["puntuacion", "fecha"]:
+        		ordenar_por = "puntuacion"
 
+    		try:
+        		reseñas = db.select(f"""
+            		SELECT r.comentario, r.puntuacion, r.fecha, u.name
+            		FROM Reviews r
+            		JOIN User u ON r.user_id = u.id
+            		WHERE r.movie_id = ?
+            		ORDER BY {ordenar_por} {orden}
+        		""", (movie_id,))
+        		return [
+            		{
+                	"comentario": r[0],
+                	"puntuacion": r[1],
+                	"fecha": r[2],
+                	"usuario": r[3]
+            		}
+            		for r in reseñas
+        		]
+    		except Exception as e:
+        		return f"Error al obtener las puntuaciones: {str(e)}"
+
+	def promedio_puntuaciones(self, movie_id):
+    		"""Calcular el promedio de puntuaciones para una película."""
+    		try:
+        		promedio = db.select("""
+            		SELECT AVG(puntuacion)
+            		FROM Reviews
+            		WHERE movie_id = ?
+       			 """, (movie_id,))[0][0]
+        		return round(promedio, 2) if promedio is not None else "Sin puntuaciones"
+    		except Exception as e:
+       		 	return f"Error al calcular el promedio: {str(e)}"
+	
 
 	# === Recomendaciones del sistema ===
 	def get_recommended_books(self, user=None):

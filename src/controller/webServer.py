@@ -329,4 +329,7 @@ def accept_requested_movie():
             return jsonify({"message": f"Error: {str(e)}"}), 500
     else:
         return redirect('/login')
-
+        
+@app.route('/puntuaciones')
+def puntuaciones():
+	return render_template('puntuaciones.html')

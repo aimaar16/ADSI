@@ -108,6 +108,19 @@ cur.execute("""
 	)
 """)
 
+cur.execute("""
+   CREATE TABLE Reviews (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID único de la reseña
+    		movie_id INTEGER NOT NULL,            -- ID de la película (clave foránea)
+    		user_id INTEGER NOT NULL,             -- ID del usuario que escribió la reseña (clave foránea)
+    		comentario TEXT,                      -- Comentario de la reseña
+    		puntuacion INTEGER CHECK(puntuacion BETWEEN 1 AND 5), -- Puntuación (entre 1 y 5)
+    		fecha DATETIME DEFAULT CURRENT_TIMESTAMP, -- Fecha en que se hizo la reseña
+    		FOREIGN KEY (movie_id) REFERENCES Book(id) ON DELETE CASCADE,
+    		FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+);
+
+
 
 
 ### Insert users
