@@ -116,6 +116,28 @@ def crearUsuario():
 		
 @app.route('/revisarUsuario', methods=['GET', 'POST'])
 def revisarUsuario():
+	usuariosP = library.get_userPlist()
+	return render_template('revisarUsuario.html', pending_users=usuariosP)
+	
+@app.route('/aceptarUsuario', methods=['GET', 'POST'])
+def aceptarUsuario():
+	if request.method == 'POST':
+		email = request.form.get("email")
+		usuario = library.get_userP(email)
+		usuario = usuario[0]
+		mensaje = library.add_user(usuario[0], usuario[1], usuario[2], usuario[3], usuario[4])
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template('revisarUsuario.html')
+	
+@app.route('/denegarUsuario', methods=['GET', 'POST'])
+def denegarUsuario():
+	if request.method == 'POST':
+		email = request.form.get("email")
+		mensaje = library.delete_userP(email)
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template('revisarUsuario.html')
 		
 @app.route('/register', methods=['GET', 'POST'])
 def regUsuario():
@@ -125,7 +147,7 @@ def regUsuario():
 		fecha_nac= request.values.get("fecha_nac")
 		email = request.values.get("email")
 		password = request.values.get("password")
-		#mensaje = library.add_user(nombre, apellidos, fecha_nac, email, password)
+		mensaje = library.reg_user(nombre, apellidos, fecha_nac, email, password)
 		return redirect('/msg?mensaje=' + mensaje) 
 	else:
 		return render_template('register.html')

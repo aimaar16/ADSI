@@ -170,18 +170,3 @@ for author, title, cover, description, theme in libros:
     except Exception as e:
         print(f"Error al procesar el libro {title}: {str(e)}")
         con.rollback()
-
-
-### Insert Borrow
-# Usuario1 borrow copy1 from book1
-cur.execute("INSERT INTO Borrow VALUES (?, ?, ?, ?)", (2, 1, '2022-01-01', '2022-01-15'))
-# Usuario3 borrow copy7 from book3
-cur.execute("INSERT INTO Borrow VALUES (?, ?, ?, ?)", (4, 7, '2022-03-01', '2022-03-15'))
-con.commit()
-
-### Insert friends
-# Usuario1 friend of Usuario3
-cur.execute("INSERT INTO Friend VALUES (?, ?)", (2, 4))
-# Usuario2 friend of Usuario3
-cur.execute("INSERT INTO Friend VALUES (?, ?)", (3, 4))
-con.commit()

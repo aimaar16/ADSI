@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+    <h2>Usuarios Pendientes de Aprobación</h2>
+
+    {% if pending_users %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pending_users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+                    <td>{{ user[2] }}</td>
+                    <td>{{ user[3] }}</td>
+                    <td>
+                        <form method="POST" action="/aceptarUsuario">
+                            <input type="hidden" name="email" value="{{ user[3] }}">
+                            <button type="submit" class="btn btn-success">Aceptar</button>
+                        </form>
+                        <form method="POST" action="/denegarUsuario" style="display:inline;">
+                            <input type="hidden" name="email" value="{{ user[3] }}">
+                            <button type="submit" class="btn btn-danger">Denegar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay usuarios pendientes de aprobación.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
+

@@ -52,6 +52,27 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
+			
+	def get_userPlist(self):
+		usuarios = db.select("SELECT name, last_name, birth_date, email FROM UserPendientes")
+		return usuarios
+		
+		
+	def get_userP(self, email):
+		usuarios = db.select("SELECT name, last_name, birth_date, email, password FROM UserPendientes WHERE email = ?", (email,))
+		return usuarios
+	
+			
+	def reg_user(self, name, last_name, birth_date, email, password):
+		if None == get_user2(email):
+			try:
+				dataBase_password = str(password) + salt
+				hashed = hashlib.md5(dataBase_password.encode())
+				dataBase_password = hashed.hexdigest()
+				db.insert("INSERT INTO UserPendientes VALUES (NULL, ?, ?, ?, ?, ?, ?)", (name, last_name, birth_date, email, dataBase_password, 0))
+				return("Usuario registrado correctamente")
+			except:
+				return("Usuario ya existe")
 
 	def get_user_cookies(self, token, time):
 		user = db.select("SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?", (time, token))
@@ -63,11 +84,9 @@ class LibraryController:
 	# === Administracion ===
 	def add_user(self, name, last_name, birth_date, email, password):
 		try:
-			dataBase_password = str(password) + salt
-			hashed = hashlib.md5(dataBase_password.encode())
-			dataBase_password = hashed.hexdigest()
-			db.insert("INSERT INTO User VALUES (NULL, ?, ?, ?, ?, ?, ?)", (name, last_name, birth_date, email, dataBase_password, 0))
-			return("Usuario creado correctamente")
+			db.insert("INSERT INTO User VALUES (NULL, ?, ?, ?, ?, ?, ?)", (name, last_name, birth_date, email, password, 0))
+			db.delete("DELETE FROM UserPendientes WHERE email = ?", (email,))
+			return("Usuario aceptado correctamente")
 		except:
 			return("Usuario ya existe")
 			
@@ -92,6 +111,13 @@ class LibraryController:
 			return("Usuario borrado correctamente")
 		else:
 			return("El email no existe o es admin")
+	
+	def delete_userP(self, email):
+		try:
+			db.delete("DELETE FROM UserPendientes WHERE email = ?", (email,))
+			return("Usuario borrado correctamente")
+		except:
+			return("Usuario no existe")
 		
 	def add_book(self, title, author, cover, description):
 		try:
