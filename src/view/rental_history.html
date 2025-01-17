@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rental History</title>
+</head>
+<body>
+    <h1>Your Rental History</h1>
+    <ul>
+        {% for rental in rentals %}
+            <li>
+                <h3>{{ rental.movie_title }}</h3>
+                <p>Rented on: {{ rental.rent_date }}</p>
+                <p>Available until: {{ rental.end_date }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

@@ -221,6 +221,44 @@ def borrarLibro():
 		return redirect('/msg?mensaje=' + mensaje)
 	else:
 		return render_template('borrarLibro.html')
+	
+@app.route('/rental_catalogue')
+def rental_catalogue():
+	title = request.values.get("title", "")
+	page = int(request.values.get("page", 1))
+	# Llamar a la función de búsqueda de películas
+	movies, nb_movies = library.search_movies(title=title, page=page - 1)
+    
+	# Calcular el total de páginas
+	total_pages = (nb_movies // 6) + (1 if nb_movies % 6 > 0 else 0)
+    
+	return render_template('rental_catalogue.html', 
+			movies=movies, 
+			title=title, 
+			current_page=page, 
+			total_pages=total_pages)
+
+@app.route('/rent_movie', methods=['POST'])
+def rent_movie():
+	if 'user' in dir(request) and request.user and request.user.token:
+		movie_id = request.form.get("movie_id")
+		user = request.user
+		# Llamar a la función de alquiler de película
+		message = library.rent_movie(user.id, movie_id)
+		return redirect('/msg?mensaje=' + message)
+	else:
+		return redirect('/login')
+
+@app.route('/rental_history')
+def rental_history():
+	if 'user' in dir(request) and request.user and request.user.token:
+		user = request.user
+		# Llamar a la función para obtener el historial de alquileres
+		rentals = library.get_rental_history(user.id)
+		return render_template('rental_history.html', rentals=rentals)
+	else:
+		return redirect('/login')
+
 
 @app.route('/msg', methods=['GET'])
 def mensaje():

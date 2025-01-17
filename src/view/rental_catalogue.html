@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rental Catalogue</title>
+</head>
+<body>
+    <h1>Rental Catalogue</h1>
+    <form method="GET" action="/rental_catalogue">
+        <input type="text" name="title" placeholder="Search by title">
+        <input type="text" name="author" placeholder="Search by author">
+        <button type="submit">Search</button>
+    </form>
+    <ul>
+        {% for movie in movies %}
+            <li>
+                <h3>{{ movie.title }}</h3>
+                <p>{{ movie.description }}</p>
+                <!-- Formulario que envía una solicitud POST para alquilar la película -->
+                <form method="POST" action="/rent_movie">
+                    <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                    <button type="submit">Rent</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

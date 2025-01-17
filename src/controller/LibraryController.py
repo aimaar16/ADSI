@@ -2,6 +2,7 @@ import random
 import hashlib
 from model import Connection, Book, User
 from model.tools import hash_password
+from datetime import datetime
 
 
 db = Connection()
@@ -179,6 +180,75 @@ class LibraryController:
 			nombre = db.select("""SELECT user.name FROM User WHERE id = ?""", [id])
 			lista_nombres_recomendados.append(nombre[0][0])			
 		return lista_nombres_recomendados
+
+	def search_movies(self, title="", author="", limit=6, page=0):
+		"""Busca películas en la base de datos basándose en título y autor."""
+		# Contar el total de resultados
+		count = db.select("""
+			SELECT count(*) 
+			FROM Book 
+			WHERE title LIKE ? AND author LIKE ?
+		""", (f"%{title}%", f"%{author}%"))[0][0]
+
+		# Obtener los resultados paginados
+		res = db.select("""
+			SELECT * 
+			FROM Book 
+			WHERE title LIKE ? AND author LIKE ?
+			LIMIT ? OFFSET ?
+		""", (f"%{title}%", f"%{author}%", limit, limit * page))
+    
+		movies = [
+			{
+				"id": m[0],        # ID de la película (Book)
+				"title": m[1],     # Título de la película
+				"author": m[2],    # Autor de la película
+				"cover": m[3],     # Portada de la película
+				"description": m[4]  # Descripción de la película
+			}  
+			for m in res
+		]
+		return movies, count
+
+	def rent_movie(self, user_id, movie_id):
+		"""Permite alquilar una película."""
+		from datetime import datetime, timedelta
+
+		rent_date = datetime.now()
+		end_date = rent_date + timedelta(hours=48)
+
+		# Insertar en la tabla Borrow
+		try:
+			db.insert("""
+				INSERT INTO Borrow (user_id, copy_id, borrow_date, return_date)
+				VALUES (?, ?, ?, ?)
+			""", (user_id, movie_id, rent_date, end_date))
+			return "Película alquilada correctamente."
+		except Exception as e:
+			return f"Error al alquilar la película: {str(e)}"
+
+	def get_rental_history(self, user_id):
+		"""Obtiene el historial de alquileres de un usuario."""
+		res = db.select("""
+			SELECT b.title AS movie_title, br.borrow_date, br.return_date
+			FROM Borrow br
+			JOIN Book b ON br.copy_id = b.id
+			WHERE br.user_id = ?
+		""", (user_id,))
+    
+		rental_history = [
+			{
+				"movie_title": r[0],
+				"rent_date": datetime.strptime(r[1], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y'),
+				"end_date": datetime.strptime(r[2], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y')
+ 			}
+		for r in res
+		]
+		return rental_history
+
+
+
+
 
 	# === Recomendaciones del sistema ===
 	def get_recommended_books(self, user=None):
