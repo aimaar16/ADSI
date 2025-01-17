@@ -1,55 +1,87 @@
+from flask import Flask, render_template, request, make_response, redirect, Blueprint
+import requests
 from .LibraryController import LibraryController
-from flask import Flask, render_template, request, make_response, redirect
 
+# Crear la aplicación Flask
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 app.secret_key = "library"
 
 library = LibraryController()
 
+# === Configuración de OMDb API ===
+OMDB_API_KEY = "773f7b1a"  # Sustituye esto con tu clave de API de OMDb
+OMDB_API_URL = "http://www.omdbapi.com/"
 
 @app.before_request
 def get_logged_user():
-	if '/css' not in request.path and '/js' not in request.path:
-		token = request.cookies.get('token')
-		time = request.cookies.get('time')
-		if token and time:
-			request.user = library.get_user_cookies(token, float(time))
-			if request.user:
-				request.user.token = token
-
+    if '/css' not in request.path and '/js' not in request.path:
+        token = request.cookies.get('token')
+        time = request.cookies.get('time')
+        if token and time:
+            request.user = library.get_user_cookies(token, float(time))
+            if request.user:
+                request.user.token = token
 
 @app.after_request
 def add_cookies(response):
-	if 'user' in dir(request) and request.user and request.user.token:
-		session = request.user.validate_session(request.user.token)
-		response.set_cookie('token', session.hash)
-		response.set_cookie('time', str(session.time))
-	return response
-
+    if 'user' in dir(request) and request.user and request.user.token:
+        session = request.user.validate_session(request.user.token)
+        response.set_cookie('token', session.hash)
+        response.set_cookie('time', str(session.time))
+    return response
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+    return render_template('index.html')
 
-
-@app.route('/catalogue')
+@app.route('/catalogue', methods=['GET', 'POST'])
 def catalogue():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
-	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
-	# === Recomendaciones del sistema ===
-	if 'user' in dir(request) and request.user and request.user.token:
-		user = request.user
-		# Obtener libros recomendados
-		recommended_books = library.get_recommended_books(user)
-	else:
-		recommended_books = []
-	# ===================================
-	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, recommended_books=recommended_books, max=max, min=min)
+    if 'user' in dir(request) and request.user and request.user.token:
+        title = request.values.get("title", "")
+        page = int(request.values.get("page", 1))
 
+        # Llamar a la API de OMDb para buscar películas
+        params = {
+            "s": title,
+            "page": page,
+            "apikey": OMDB_API_KEY
+        }
+
+        try:
+            response = requests.get(OMDB_API_URL, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                movies = data.get("Search", [])
+                total_results = int(data.get("totalResults", 0))
+                total_pages = (total_results // 10) + (1 if total_results % 10 > 0 else 0)
+            else:
+                movies = []
+                total_pages = 1
+        except Exception as e:
+            print(f"Error al realizar la solicitud a la API: {e}")
+            movies = []
+            total_pages = 1
+
+    # Recomendaciones del sistema
+        if 'user' in dir(request) and request.user and request.user.token:
+            user = request.user
+            recommended_movies = library.get_recommended_books(user)  # Reutilizamos la lógica de recomendaciones
+        else:
+            recommended_movies = []
+
+        return render_template(
+            'catalogue.html',
+            movies=movies,
+            title=title,
+            current_page=page,
+            total_pages=total_pages,
+            recommended_movies=recommended_movies,
+            max=max,
+            min=min
+        )
+    else:
+        return redirect('/login')  # Redirigir a catálogo si no es admin o no está logueado
+        
 
 @app.route('/profile')
 def profile():
@@ -264,3 +296,37 @@ def rental_history():
 def mensaje():
 	mensaje = request.values.get("mensaje","")
 	return render_template('msg.html', mensaje=mensaje)
+
+@app.route('/admin')
+def admin():
+    if 'user' in dir(request) and request.user and request.user.token:
+        return render_template('admin.html')
+    else:    
+        return redirect('/login')  # Redirigir a catálogo si no es admin o no está logueado
+
+@app.route('/accept_requested_movie', methods=['POST'])
+def accept_requested_movie():
+    if 'user' in dir(request) and request.user and request.user.token:
+        try:
+            # Obtener los datos de la película desde la solicitud JSON
+            movie_data = request.get_json()
+            movie = movie_data.get('movie')
+
+            if movie:
+                # Extraer solo el título y el año de la película
+                title = movie.get('Title')
+                year = movie.get('Year')
+
+                if title and year:
+                    # Llamar a la función que guarda el título y el año en la base de datos
+                    message = library.add_movie(title, year)
+                    return jsonify({"message": message}), 200
+                else:
+                    return jsonify({"message": "La película no contiene título o año válido"}), 400
+            else:
+                return jsonify({"message": "No se proporcionó película válida"}), 400
+        except Exception as e:
+            return jsonify({"message": f"Error: {str(e)}"}), 500
+    else:
+        return redirect('/login')
+

@@ -81,6 +81,8 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
+			
+			
 	
 	# === Administracion ===
 	def add_user(self, name, last_name, birth_date, email, password):
@@ -247,7 +249,7 @@ class LibraryController:
 		return rental_history
 
 
-
+    
 
 
 	# === Recomendaciones del sistema ===

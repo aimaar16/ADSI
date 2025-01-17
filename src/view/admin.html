@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Solicitudes</title>
+    <style>
+        /* Estilos básicos */
+        body {
+            background-color: #1e1e1e;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #9c27b0; /* Morado */
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        li {
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px;
+            width: 250px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        li:hover {
+            transform: scale(1.05);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #9c27b0;
+            color: white;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #7b1fa2; /* Morado más oscuro */
+        }
+
+        .back-button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Películas Solicitadas</h1>
+
+    <ul id="requestedMoviesList">
+        <!-- Lista de películas solicitadas se mostrará aquí -->
+    </ul>
+
+    <button class="back-button" onclick="window.location.href = '/catalogue'">Volver al Catálogo</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const requestedMoviesList = document.getElementById('requestedMoviesList');
+
+            // Cargar películas solicitadas desde localStorage
+            let requestedMovies = JSON.parse(localStorage.getItem('requestedMovies')) || [];
+
+            if (requestedMovies.length === 0) {
+                requestedMoviesList.innerHTML = '<li>No se ha solicitado ninguna película aún.</li>';
+            } else {
+                requestedMovies.forEach((movie, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${movie.title} (${movie.year})`;
+
+                    // Crear el botón de "Aceptar"
+                    const acceptButton = document.createElement('button');
+                    acceptButton.textContent = 'Aceptar';
+                    acceptButton.onclick = () => acceptMovie(index, movie);
+
+                    // Agregar el botón al <li>
+                    li.appendChild(acceptButton);
+                    requestedMoviesList.appendChild(li);
+                });
+            }
+
+            // Función para eliminar la película solicitada y guardarla en la base de datos
+            function acceptMovie(index, movie) {
+                // Eliminar la película de la lista de solicitudes
+                requestedMovies.splice(index, 1);
+                localStorage.setItem('requestedMovies', JSON.stringify(requestedMovies));
+
+                // Recargar la lista de películas
+                location.reload();
+
+                // Enviar la solicitud al servidor para guardar la película en la base de datos
+                fetch('/accept_requested_movie', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ movie: movie }),
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Película aceptada y guardada en la base de datos');
+                    } else {
+                        console.log('Error al guardar película en la base de datos');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
+
