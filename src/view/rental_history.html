@@ -28,6 +28,7 @@
                     <h3>{{ rental.movie_title }}</h3>
                     <p><strong>Rented on:</strong> {{ rental.rent_date }}</p>
                     <p><strong>Available until:</strong> {{ rental.end_date }}</p>
+		    <a class="btn btn-primary" href="/puntuaciones?id={{ rental.movie_id }}">Ver Puntuaciones de  {{ rental.movie_title}}</a>
                     <!-- Botón para reportar un bug -->
                     <button class="btn btn-warning" data-bs-toggle="collapse" data-bs-target="#reportBug{{ loop.index }}">Report Bug</button>
                     <div id="reportBug{{ loop.index }}" class="collapse mt-3">

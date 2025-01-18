@@ -352,6 +352,47 @@ def report_bug():
  
  
        
+
 @app.route('/puntuaciones')
 def puntuaciones():
-	return render_template('puntuaciones.html')
+    # Obtener el ID de la película de la URL
+    movie_id = request.args.get('movie_id')
+    if not movie_id:
+        return "Error: No se especificó un ID de película.", 400
+
+    try:
+        movie_id = int(movie_id)
+    except ValueError:
+        return "Error: El ID de la película es inválido.", 400
+
+    # Usar el controlador para obtener las reseñas y el promedio
+    controller = LibraryController()
+    reseñas = controller.obtener_puntuaciones(movie_id)
+    promedio = controller.promedio_puntuaciones(movie_id)
+
+    # Pasar los datos a la plantilla
+    return render_template('puntuaciones.html', reseñas=reseñas, promedio=promedio, movie_id=movie_id)
+
+@app.route('/añadir_reseña', methods=['POST'])
+def añadir_reseña():
+    # Obtener el ID de la película del formulario
+    movie_id = request.form.get('movie_id')
+    if not movie_id:
+        return "Error: No se recibió el ID de la película.", 400
+
+    try:
+        movie_id = int(movie_id)
+    except ValueError:
+        return "Error: El ID de la película es inválido.", 400
+
+    # Obtener los demás datos del formulario
+    user_id = 1  # Aquí puedes obtener el usuario autenticado
+    comentario = request.form.get('comentario', '')
+    puntuacion = int(request.form.get('puntuacion', 0))
+
+    # Añadir la reseña usando el controlador
+    controller = LibraryController()
+    resultado = controller.añadir_reseña(movie_id, user_id, comentario, puntuacion)
+
+    # Redirigir de vuelta a la página de puntuaciones
+    return redirect(f'/puntuaciones?id={movie_id}')

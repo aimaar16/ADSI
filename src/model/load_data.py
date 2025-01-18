@@ -58,13 +58,16 @@ cur.execute("""
 """)
 
 cur.execute("""
-    CREATE TABLE Borrow(
-		user_id integer,
-		copy_id integer,
-		borrow_date date,
-		return_date date,
-		FOREIGN KEY(user_id) REFERENCES User(id),
-		FOREIGN KEY(copy_id) REFERENCES Copy(id)
+	CREATE TABLE Borrow(
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		movie_id INTEGER NOT NULL,
+    		user_id INTEGER NOT NULL,
+    		copy_id INTEGER NOT NULL,
+    		borrow_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    		return_date DATETIME,
+    		FOREIGN KEY(movie_id) REFERENCES Book(id),
+    		FOREIGN KEY(user_id) REFERENCES User(id),
+    		FOREIGN KEY(copy_id) REFERENCES Copy(id)
 	)
 """)
 
@@ -133,7 +136,7 @@ cur.execute("""
 
 
 ### Insert users
-with open('usuarios.json', 'r') as f:
+with open('../usuarios.json', 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
 for user in usuarios:
