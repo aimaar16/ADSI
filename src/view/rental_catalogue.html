@@ -30,7 +30,7 @@
             <div class="mb-3">
                 <input type="text" name="author" class="form-control" placeholder="Search by author">
             </div>
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-primary">Buscar</button>
         </form>
         <ul class="list-group">
             {% for movie in movies %}
@@ -40,7 +40,7 @@
                     <!-- Formulario que envía una solicitud POST para alquilar la película -->
                     <form method="POST" action="/rent_movie">
                         <input type="hidden" name="movie_id" value="{{ movie.id }}">
-                        <button type="submit" class="btn btn-success">Rent</button>
+                        <button type="submit" class="btn btn-success">Alquilar</button>
                     </form>
                 </li>
             {% endfor %}
