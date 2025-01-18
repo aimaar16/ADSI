@@ -297,6 +297,19 @@ class LibraryController:
     		except Exception as e:
        		 	return f"Error al calcular el promedio: {str(e)}"
 	
+	
+	
+	def report_bug(self, user_id, movie_title, bug_description):
+		"""Guarda el reporte de un bug relacionado con una película."""
+		try:
+			db.insert("""
+				INSERT INTO BugReports (user_id, movie_title, description, report_date)
+				VALUES (?, ?, ?, ?)
+			""", (user_id, movie_title, bug_description, datetime.now()))
+			return "Gracias por reportar el problema."
+		except Exception as e:
+			return f"Error al guardar el reporte: {str(e)}"
+
 
 	# === Recomendaciones del sistema ===
 	def get_recommended_books(self, user=None):

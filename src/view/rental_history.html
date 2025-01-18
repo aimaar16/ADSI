@@ -2,20 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Rental History</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <script src="js/bootstrap.bundle.js"></script>
 </head>
 <body>
-    <h1>Your Rental History</h1>
-    <ul>
-        {% for rental in rentals %}
-            <li>
-                <h3>{{ rental.movie_title }}</h3>
-                <p>Rented on: {{ rental.rent_date }}</p>
-                <p>Available until: {{ rental.end_date }}</p>
-		<a class="btn btn-primary" href="/puntuaciones">Ver Puntuaciones</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <span class="fs-4">Rental History</span>
+            </a>
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="/catalogue" class="nav-link">Catalogue</a></li>
+                <li class="nav-item"><a href="/rental_catalogue" class="nav-link">Alquiler</a></li>
+                <li class="nav-item"><a href="/rental_history" class="nav-link active">Historial de Alquileres</a></li>
+            </ul>
+        </header>
+        <h1>Your Rental History</h1>
+        <ul class="list-group">
+            {% for rental in rentals %}
+                <li class="list-group-item">
+                    <h3>{{ rental.movie_title }}</h3>
+                    <p><strong>Rented on:</strong> {{ rental.rent_date }}</p>
+                    <p><strong>Available until:</strong> {{ rental.end_date }}</p>
+                    <!-- Botón para reportar un bug -->
+                    <button class="btn btn-warning" data-bs-toggle="collapse" data-bs-target="#reportBug{{ loop.index }}">Report Bug</button>
+                    <div id="reportBug{{ loop.index }}" class="collapse mt-3">
+                        <form method="POST" action="/report_bug">
+                            <input type="hidden" name="movie_title" value="{{ rental.movie_title }}">
+                            <textarea name="bug_description" class="form-control mb-2" placeholder="Describe the issue"></textarea>
+                            <button type="submit" class="btn btn-primary">Reportar</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
 

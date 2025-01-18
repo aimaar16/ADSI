@@ -329,7 +329,21 @@ def accept_requested_movie():
             return jsonify({"message": f"Error: {str(e)}"}), 500
     else:
         return redirect('/login')
-        
+ 
+@app.route('/report_bug', methods=['POST'])
+def report_bug():
+	if 'user' in dir(request) and request.user and request.user.token:
+		user = request.user
+		movie_title = request.form.get("movie_title")
+		bug_description = request.form.get("bug_description")
+		message = library.report_bug(user.id, movie_title, bug_description)
+		return redirect(f"/msg?mensaje={message}")
+	else:
+		return redirect('/login')
+ 
+ 
+ 
+       
 @app.route('/puntuaciones')
 def puntuaciones():
 	return render_template('puntuaciones.html')
