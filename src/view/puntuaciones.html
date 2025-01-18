@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <script src="js/bootstrap.bundle.js"></script>
+
+    <title>Reseñas y Puntuaciones</title>
+</head>
+<body>
+    <h1>Reseñas de la Película</h1>
+    <h2>Añadir una Reseña</h2>
+	<form action="/añadir_reseña" method="POST">
+    	<!-- Campo oculto con el ID de la película -->
+    	<input type="hidden" name="movie_id" value="{{ movie_id }}">
+    
+    	<label for="usuario">Usuario:</label>
+    	<input type="text" id="usuario" name="usuario" required>
+    
+    	<label for="comentario">Comentario:</label>
+    	<textarea id="comentario" name="comentario" required></textarea>
+    
+    	<label for="puntuacion">Puntuación:</label>
+    	<select id="puntuacion" name="puntuacion" required>
+        	<option value="1">1</option>
+        	<option value="2">2</option>
+        	<option value="3">3</option>
+        	<option value="4">4</option>
+        	<option value="5">5</option>
+    	</select>
+    
+    		<button type="submit">Enviar Reseña</button>
+	</form>
+
+    <!-- Mostrar el promedio de puntuaciones -->
+    <div class="promedio">
+        <h2>Promedio de Puntuaciones: {{ promedio }}</h2>
+    </div>
+
+    <!-- Mostrar las reseñas -->
+    <div class="reseñas">
+        {% if reseñas %}
+            {% for reseña in reseñas %}
+                <div class="reseña">
+                    <p><strong>Usuario:</strong> {{ reseña.usuario }}</p>
+                    <p><strong>Puntuación:</strong> {{ reseña.puntuacion }}/5</p>
+                    <p><strong>Comentario:</strong> {{ reseña.comentario }}</p>
+                    <p><em>Fecha:</em> {{ reseña.fecha }}</p>
+                </div>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <p>No hay reseñas para esta película.</p>
+        {% endif %}
+    </div>
+
+    <!-- Enlace para volver -->
+    <a href="/">Volver al inicio</a>
+</body>
+</html>
