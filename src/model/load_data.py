@@ -118,7 +118,16 @@ cur.execute("""
     		fecha DATETIME DEFAULT CURRENT_TIMESTAMP, -- Fecha en que se hizo la reseña
     		FOREIGN KEY (movie_id) REFERENCES Book(id) ON DELETE CASCADE,
     		FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
-);
+	)
+""")
+
+cur.execute("""
+   CREATE TABLE Donacion (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID único de la donación
+        donationAmount INTEGER NOT NULL,       -- Monto de la donación
+        fecha DATETIME DEFAULT CURRENT_TIMESTAMP -- Fecha de la donación (por defecto, la fecha actual)
+   	)
+""")
 
 
 
@@ -131,7 +140,11 @@ for user in usuarios:
 	dataBase_password = user['password'] + salt
 	hashed = hashlib.md5(dataBase_password.encode())
 	dataBase_password = hashed.hexdigest()
-	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['nombres']}', '{user['apellidos']}', '{user['fecha_nac']}', '{user['email']}', '{dataBase_password}', '{user['admin']}')""")
+	cur.execute(
+	    "INSERT INTO User VALUES (NULL, ?, ?, ?, ?, ?, ?)", 
+	    (user['nombres'], user['apellidos'], user['fecha_nac'], user['email'], dataBase_password, user['admin'])
+	)
+
 	con.commit()
 
 ### Insert books, copies, authors and themes

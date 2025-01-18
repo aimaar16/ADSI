@@ -65,7 +65,7 @@ class LibraryController:
 	
 			
 	def reg_user(self, name, last_name, birth_date, email, password):
-		if None == get_user2(email):
+		if None == self.get_user2(email):
 			try:
 				dataBase_password = str(password) + salt
 				hashed = hashlib.md5(dataBase_password.encode())
@@ -82,6 +82,12 @@ class LibraryController:
 		else:
 			return None
 			
+	def add_donation(self, donationAmount):
+		try:
+			db.insert("INSERT INTO Donacion (donationAmount) VALUES (?)", (donationAmount,))
+			return("Donacion compleatada con exito, GRACIAS!")
+		except:
+			return("Ha ocurrido un error en la donacion")
 			
 	
 	# === Administracion ===

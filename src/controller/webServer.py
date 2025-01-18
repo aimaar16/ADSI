@@ -91,6 +91,14 @@ def profile():
     else:
         return redirect('/login')
 
+@app.route('/donacion', methods=['GET', 'POST'])
+def donacion():
+	if request.method == 'POST':
+		donationAmount = request.values.get("donationAmount")
+		mensaje = library.add_donation(donationAmount)
+		return redirect('/msg?mensaje=' + mensaje) 
+	else:
+		return render_template("donacion.html")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
