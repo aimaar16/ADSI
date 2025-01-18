@@ -10,53 +10,77 @@
     <title>Reseñas y Puntuaciones</title>
 </head>
 <body>
-    <h1>Reseñas de la Película</h1>
-    <h2>Añadir una Reseña</h2>
-	<form action="/añadir_reseña" method="POST">
-    	<!-- Campo oculto con el ID de la película -->
-    	<input type="hidden" name="movie_id" value="{{ movie_id }}">
-    
-    	<label for="usuario">Usuario:</label>
-    	<input type="text" id="usuario" name="usuario" required>
-    
-    	<label for="comentario">Comentario:</label>
-    	<textarea id="comentario" name="comentario" required></textarea>
-    
-    	<label for="puntuacion">Puntuación:</label>
-    	<select id="puntuacion" name="puntuacion" required>
-        	<option value="1">1</option>
-        	<option value="2">2</option>
-        	<option value="3">3</option>
-        	<option value="4">4</option>
-        	<option value="5">5</option>
-    	</select>
-    
-    		<button type="submit">Enviar Reseña</button>
-	</form>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <span class="fs-4">Reseñas de la Película</span>
+            </a>
+        </header>
 
-    <!-- Mostrar el promedio de puntuaciones -->
-    <div class="promedio">
-        <h2>Promedio de Puntuaciones: {{ promedio }}</h2>
-    </div>
+        <h1>Reseñas y Puntuaciones</h1>
 
-    <!-- Mostrar las reseñas -->
-    <div class="reseñas">
-        {% if reseñas %}
-            {% for reseña in reseñas %}
-                <div class="reseña">
-                    <p><strong>Usuario:</strong> {{ reseña.usuario }}</p>
-                    <p><strong>Puntuación:</strong> {{ reseña.puntuacion }}/5</p>
-                    <p><strong>Comentario:</strong> {{ reseña.comentario }}</p>
-                    <p><em>Fecha:</em> {{ reseña.fecha }}</p>
+        <!-- Comprobación del ID de la película -->
+        {% if movie_id %}
+            <h2>Añadir una Reseña</h2>
+            <form action="/añadir_reseña" method="POST" class="mb-4">
+                <!-- Campo oculto con el ID de la película -->
+                <input type="hidden" name="movie_id" value="{{ movie_id }}">
+        
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Usuario:</label>
+                    <input type="text" id="usuario" name="usuario" class="form-control" required>
                 </div>
-                <hr>
-            {% endfor %}
-        {% else %}
-            <p>No hay reseñas para esta película.</p>
-        {% endif %}
-    </div>
+        
+                <div class="mb-3">
+                    <label for="comentario" class="form-label">Comentario:</label>
+                    <textarea id="comentario" name="comentario" class="form-control" required></textarea>
+                </div>
+        
+                <div class="mb-3">
+                    <label for="puntuacion" class="form-label">Puntuación:</label>
+                    <select id="puntuacion" name="puntuacion" class="form-select" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+        
+                <button type="submit" class="btn btn-primary">Enviar Reseña</button>
+            </form>
 
-    <!-- Enlace para volver -->
-    <a href="/">Volver al inicio</a>
+            <!-- Mostrar el promedio de puntuaciones -->
+            <div class="promedio mb-4">
+                <h2>Promedio de Puntuaciones: {{ promedio }}</h2>
+            </div>
+
+            <!-- Mostrar las reseñas -->
+            <div class="reseñas">
+                {% if reseñas %}
+                    {% for reseña in reseñas %}
+                        <div class="reseña mb-3">
+                            <p><strong>Usuario:</strong> {{ reseña.usuario }}</p>
+                            <p><strong>Puntuación:</strong> {{ reseña.puntuacion }}/5</p>
+                            <p><strong>Comentario:</strong> {{ reseña.comentario }}</p>
+                            <p><em>Fecha:</em> {{ reseña.fecha }}</p>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay reseñas para esta película.</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <!-- Mensaje de error si falta el ID de película -->
+            <div class="alert alert-danger">
+                <p>Error: No se especificó un ID de película.</p>
+            </div>
+        {% endif %}
+
+        <!-- Enlace para volver -->
+        <a href="/" class="btn btn-secondary mt-4">Volver al inicio</a>
+    </div>
 </body>
 </html>
+

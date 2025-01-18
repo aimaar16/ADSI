@@ -280,7 +280,7 @@ class LibraryController:
 	def get_rental_history(self, user_id):
 		"""Obtiene el historial de alquileres de un usuario."""
 		res = db.select("""
-			SELECT b.title AS movie_title, br.borrow_date, br.return_date
+			SELECT b.id AS movie_id, b.title AS movie_title, br.borrow_date, br.return_date
 			FROM Borrow br
 			JOIN Book b ON br.copy_id = b.id
 			WHERE br.user_id = ?
@@ -288,13 +288,15 @@ class LibraryController:
     
 		rental_history = [
 			{
-				"movie_title": r[0],
-				"rent_date": datetime.strptime(r[1], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y'),
-				"end_date": datetime.strptime(r[2], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y')
- 			}
-		for r in res
+			"movie_id": r[0],
+			"movie_title": r[1],
+			"rent_date": datetime.strptime(r[2], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y'),
+			"end_date": datetime.strptime(r[3], '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%m-%Y')
+			}
+			for r in res
 		]
 		return rental_history
+
 	def añadir_reseña(self, movie_id, user_id, comentario, puntuacion):
     		"""Agregar una reseña con comentario y puntuación para una película."""
     		try:

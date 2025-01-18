@@ -355,23 +355,31 @@ def report_bug():
 
 @app.route('/puntuaciones')
 def puntuaciones():
-    # Obtener el ID de la película de la URL
-    movie_id = request.args.get('movie_id')
-    if not movie_id:
-        return "Error: No se especificó un ID de película.", 400
+	# Obtener el ID de la película de la URL
+	movie_id = request.args.get('movie_id')
+    
+	if not movie_id:
+		return redirect('/msg?mensaje=Error: No se especificó un ID de película.')
 
-    try:
-        movie_id = int(movie_id)
-    except ValueError:
-        return "Error: El ID de la película es inválido.", 400
+	try:
+		movie_id = int(movie_id)
+	except ValueError:
+		return redirect('/msg?mensaje=Error: El ID de la película es inválido.')
 
-    # Usar el controlador para obtener las reseñas y el promedio
-    controller = LibraryController()
-    reseñas = controller.obtener_puntuaciones(movie_id)
-    promedio = controller.promedio_puntuaciones(movie_id)
+	# Usar el controlador para obtener las reseñas y el promedio
+	controller = LibraryController()
+	reseñas = controller.obtener_puntuaciones(movie_id)
+	promedio = controller.promedio_puntuaciones(movie_id)
 
-    # Pasar los datos a la plantilla
-    return render_template('puntuaciones.html', reseñas=reseñas, promedio=promedio, movie_id=movie_id)
+	# Validar si hay reseñas disponibles
+	if isinstance(reseñas, str):
+		return redirect(f'/msg?mensaje={reseñas}')
+	if isinstance(promedio, str):
+		return redirect(f'/msg?mensaje={promedio}')
+
+	# Pasar los datos a la plantilla
+	return render_template('puntuaciones.html', reseñas=reseñas, promedio=promedio, movie_id=movie_id)
+
 
 @app.route('/añadir_reseña', methods=['POST'])
 def añadir_reseña():
