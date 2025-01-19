@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <u><h1 style="text-align: center;">Confirmar Donación</h1></u>
+</div>
+
+<div class="container p-5 my-5 border">
+    <form class="form-inline text-left" method="POST" id="donationForm">
+        <div class="form-group row">
+            <label for="donationAmount" class="col-sm-2 col-form-label">Cantidad</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" name="donationAmount" id="donationAmount" placeholder="Introduce un dígito">
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <div class="col-sm-10 offset-sm-2">
+                <br>
+                <button type="submit" id="confirmButton" class="btn btn-primary">Confirmar Donación</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
+
