@@ -7,9 +7,10 @@ salt = "library"
 
 ### Borra la base de datos
 if os.path.exists("datos.db"):
-	os.remove("datos.db")
+	print("Recreando bd")
+	os.remove("../datos.db")
 
-con = sqlite3.connect("datos.db")
+con = sqlite3.connect("../datos.db")
 cur = con.cursor()
 
 ### Crea la base de datos
@@ -132,6 +133,16 @@ cur.execute("""
    	)
 """)
 
+cur.execute("""
+	CREATE TABLE BugReports (
+	    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	    user_id INTEGER NOT NULL,
+	    movie_title TEXT NOT NULL,
+	    description TEXT NOT NULL,
+	    report_date DATETIME NOT NULL,
+	    FOREIGN KEY (user_id) REFERENCES User(id)
+	)
+""")
 
 
 
