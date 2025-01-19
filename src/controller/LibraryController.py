@@ -270,9 +270,9 @@ class LibraryController:
 		# Insertar en la tabla Borrow
 		try:
 			db.insert("""
-				INSERT INTO Borrow (user_id, copy_id, borrow_date, return_date)
-				VALUES (?, ?, ?, ?)
-			""", (user_id, movie_id, rent_date, end_date))
+				INSERT INTO Borrow (movie_id, user_id, copy_id, borrow_date, return_date)
+				VALUES (?, ?, ?, ?, ?)
+			""", (movie_id, user_id, movie_id, rent_date, end_date))
 			return "Película alquilada correctamente."
 		except Exception as e:
 			return f"Error al alquilar la película: {str(e)}"
