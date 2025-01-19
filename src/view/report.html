@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reportar Película</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.js"></script>
+    <script>
+        function showSuccessMessage() {
+            alert("Reporte enviado exitosamente. Gracias por tu feedback.");
+            window.location.href = "/rental_history"; // Redirige al historial
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <span class="fs-4">Reportar Película</span>
+            </a>
+        </header>
+        <h1>Reportar un problema con "{{ movie_title }}"</h1>
+        <form onsubmit="showSuccessMessage(); return false;">
+            <div class="mb-3">
+                <label for="bug_description" class="form-label">Describe el problema:</label>
+                <textarea id="bug_description" name="bug_description" class="form-control" placeholder="Describe el problema aquí" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Reportar</button>
+        </form>
+    </div>
+</body>
+</html>
+

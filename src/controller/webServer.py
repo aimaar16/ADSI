@@ -299,6 +299,11 @@ def rental_history():
 	else:
 		return redirect('/login')
 
+@app.route('/report.html', methods=['GET'])
+def report_movie():
+    movie_id = request.args.get('movie_id')
+    movie_title = request.args.get('movie_title')
+    return render_template('report.html', movie_id=movie_id, movie_title=movie_title)
 
 @app.route('/msg', methods=['GET'])
 def mensaje():
@@ -349,8 +354,7 @@ def report_bug():
 	else:
 		return redirect('/login')
  
- 
- 
+  
        
 
 @app.route('/puntuaciones')

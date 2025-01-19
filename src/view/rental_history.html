@@ -29,6 +29,7 @@
                     <p><strong>Rented on:</strong> {{ rental.rent_date }}</p>
                     <p><strong>Available until:</strong> {{ rental.end_date }}</p>
                     <a class="btn btn-primary" href="/puntuaciones?movie_id={{ rental.movie_id }}">Ver Puntuaciones de {{ rental.movie_title }}</a>
+                    
                     <!-- Botón para reportar un bug -->
                     <button class="btn btn-warning" data-bs-toggle="collapse" data-bs-target="#reportBug{{ loop.index }}">Report Bug</button>
                     <div id="reportBug{{ loop.index }}" class="collapse mt-3">
@@ -38,6 +39,9 @@
                             <button type="submit" class="btn btn-primary">Reportar</button>
                         </form>
                     </div>
+                    
+                    <!-- Nuevo botón para reportar película -->
+                    <a class="btn btn-danger mt-2" href="/report.html?movie_id={{ rental.movie_id }}&movie_title={{ rental.movie_title }}">Reportar Película</a>
                 </li>
             {% endfor %}
         </ul>
