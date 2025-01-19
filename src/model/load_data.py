@@ -8,9 +8,9 @@ salt = "library"
 ### Borra la base de datos
 if os.path.exists("datos.db"):
 	print("Recreando bd")
-	os.remove("../datos.db")
+	os.remove("datos.db")
 
-con = sqlite3.connect("../datos.db")
+con = sqlite3.connect("datos.db")
 cur = con.cursor()
 
 ### Crea la base de datos
@@ -147,7 +147,7 @@ cur.execute("""
 
 
 ### Insert users
-with open('../usuarios.json', 'r') as f:
+with open('usuarios.json', 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
 try:
