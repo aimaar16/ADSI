@@ -10,7 +10,8 @@ class Connection:
 
 	def __init__(self):
 		if not self.__initialized:
-			self.con = sqlite3.connect("datos.db", check_same_thread=False)
+			db_path = "datos.db"
+			self.con = sqlite3.connect(f"file:{db_path}?mode=rw", uri=True, check_same_thread=False)
 			self.cur = self.con.cursor()
 			self.__initialized = True
 
