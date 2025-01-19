@@ -84,8 +84,11 @@ class LibraryController:
 			
 	def add_donation(self, donationAmount):
 		try:
-			db.insert("INSERT INTO Donacion (donationAmount) VALUES (?)", (donationAmount,))
-			return("Donacion compleatada con exito, GRACIAS!")
+			if donationAmount is not None:
+				db.insert("INSERT INTO Donacion (donationAmount) VALUES (?)", (donationAmount,))
+				return("Donacion compleatada con exito, GRACIAS!")
+			else:
+				raise ValueError("El valor proporcionado es incorrecto")	
 		except:
 			return("Ha ocurrido un error en la donacion")
 	def añadir_reseña(self, movie_id, user_id, comentario, puntuacion):
